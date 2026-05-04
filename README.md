@@ -15,7 +15,7 @@ gradient descent, no epochs, no learning rate tuning.
 ## Installation
 
 ```bash
-pip install rvfl
+pip install rvfl git+https://github.com/Techtonique/rvfl_python.git
 ```
 
 Or in editable mode from source:
