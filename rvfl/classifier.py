@@ -34,16 +34,24 @@ class RVFLClassifier(_RVFLBase, ClassifierMixin):
     >>> clf.predict_proba(X_test)
     array([[...]])
     """
-    def __init__(self, n_nodes=200, 
-                 activation="relu", scale=1.0, 
-                 alpha=1e-4, direct_link=True,
-                 random_state=42):
-        super().__init__(n_nodes=n_nodes,        
-        activation=activation,
-        scale=scale,
-        alpha=alpha,
-        direct_link=direct_link,
-        random_state=random_state)
+
+    def __init__(
+        self,
+        n_nodes=200,
+        activation="relu",
+        scale=1.0,
+        alpha=1e-4,
+        direct_link=True,
+        random_state=42,
+    ):
+        super().__init__(
+            n_nodes=n_nodes,
+            activation=activation,
+            scale=scale,
+            alpha=alpha,
+            direct_link=direct_link,
+            random_state=random_state,
+        )
         self.classes_ = None
 
     def fit(self, X, y):

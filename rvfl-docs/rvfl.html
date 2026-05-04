@@ -51,6 +51,10 @@
                         </li>
                         <li>
                         </li>
+                        <li>
+                        </li>
+                        <li>
+                        </li>
                 </ul>
 
                 
@@ -314,71 +318,91 @@ Y : array-like of shape (n_samples,) or (n_samples, n_targets)
 </span><span id="RVFLClassifier-36"><a href="#RVFLClassifier-36"><span class="linenos"> 36</span></a><span class="sd">    array([[...]])</span>
 </span><span id="RVFLClassifier-37"><a href="#RVFLClassifier-37"><span class="linenos"> 37</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="RVFLClassifier-38"><a href="#RVFLClassifier-38"><span class="linenos"> 38</span></a>
-</span><span id="RVFLClassifier-39"><a href="#RVFLClassifier-39"><span class="linenos"> 39</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-</span><span id="RVFLClassifier-40"><a href="#RVFLClassifier-40"><span class="linenos"> 40</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="RVFLClassifier-41"><a href="#RVFLClassifier-41"><span class="linenos"> 41</span></a><span class="sd">        Fit the RVFL classifier.</span>
-</span><span id="RVFLClassifier-42"><a href="#RVFLClassifier-42"><span class="linenos"> 42</span></a>
-</span><span id="RVFLClassifier-43"><a href="#RVFLClassifier-43"><span class="linenos"> 43</span></a><span class="sd">        Internally one-hot encodes ``y``, expands binary targets to two</span>
-</span><span id="RVFLClassifier-44"><a href="#RVFLClassifier-44"><span class="linenos"> 44</span></a><span class="sd">        columns so that softmax is well-defined, then delegates to</span>
-</span><span id="RVFLClassifier-45"><a href="#RVFLClassifier-45"><span class="linenos"> 45</span></a><span class="sd">        :meth:`_fit_hidden`.</span>
-</span><span id="RVFLClassifier-46"><a href="#RVFLClassifier-46"><span class="linenos"> 46</span></a>
-</span><span id="RVFLClassifier-47"><a href="#RVFLClassifier-47"><span class="linenos"> 47</span></a><span class="sd">        Parameters</span>
-</span><span id="RVFLClassifier-48"><a href="#RVFLClassifier-48"><span class="linenos"> 48</span></a><span class="sd">        ----------</span>
-</span><span id="RVFLClassifier-49"><a href="#RVFLClassifier-49"><span class="linenos"> 49</span></a><span class="sd">        X : array-like of shape (n_samples, n_features)</span>
-</span><span id="RVFLClassifier-50"><a href="#RVFLClassifier-50"><span class="linenos"> 50</span></a><span class="sd">            Training inputs.</span>
-</span><span id="RVFLClassifier-51"><a href="#RVFLClassifier-51"><span class="linenos"> 51</span></a><span class="sd">        y : array-like of shape (n_samples,)</span>
-</span><span id="RVFLClassifier-52"><a href="#RVFLClassifier-52"><span class="linenos"> 52</span></a><span class="sd">            Class labels.  Can be integers, strings, or any type accepted</span>
-</span><span id="RVFLClassifier-53"><a href="#RVFLClassifier-53"><span class="linenos"> 53</span></a><span class="sd">            by :class:`sklearn.preprocessing.LabelBinarizer`.</span>
-</span><span id="RVFLClassifier-54"><a href="#RVFLClassifier-54"><span class="linenos"> 54</span></a>
-</span><span id="RVFLClassifier-55"><a href="#RVFLClassifier-55"><span class="linenos"> 55</span></a><span class="sd">        Returns</span>
-</span><span id="RVFLClassifier-56"><a href="#RVFLClassifier-56"><span class="linenos"> 56</span></a><span class="sd">        -------</span>
-</span><span id="RVFLClassifier-57"><a href="#RVFLClassifier-57"><span class="linenos"> 57</span></a><span class="sd">        self : RVFLClassifier</span>
-</span><span id="RVFLClassifier-58"><a href="#RVFLClassifier-58"><span class="linenos"> 58</span></a><span class="sd">            Fitted estimator.</span>
-</span><span id="RVFLClassifier-59"><a href="#RVFLClassifier-59"><span class="linenos"> 59</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="RVFLClassifier-60"><a href="#RVFLClassifier-60"><span class="linenos"> 60</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">lb_</span> <span class="o">=</span> <span class="n">LabelBinarizer</span><span class="p">()</span>
-</span><span id="RVFLClassifier-61"><a href="#RVFLClassifier-61"><span class="linenos"> 61</span></a>        <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lb_</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-</span><span id="RVFLClassifier-62"><a href="#RVFLClassifier-62"><span class="linenos"> 62</span></a>        <span class="k">if</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># binary: expand to two columns</span>
-</span><span id="RVFLClassifier-63"><a href="#RVFLClassifier-63"><span class="linenos"> 63</span></a>            <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Y</span><span class="p">])</span>
-</span><span id="RVFLClassifier-64"><a href="#RVFLClassifier-64"><span class="linenos"> 64</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_hidden</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
-</span><span id="RVFLClassifier-65"><a href="#RVFLClassifier-65"><span class="linenos"> 65</span></a>        <span class="k">return</span> <span class="bp">self</span>
-</span><span id="RVFLClassifier-66"><a href="#RVFLClassifier-66"><span class="linenos"> 66</span></a>
-</span><span id="RVFLClassifier-67"><a href="#RVFLClassifier-67"><span class="linenos"> 67</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-</span><span id="RVFLClassifier-68"><a href="#RVFLClassifier-68"><span class="linenos"> 68</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="RVFLClassifier-69"><a href="#RVFLClassifier-69"><span class="linenos"> 69</span></a><span class="sd">        Predict class probabilities using a softmax over the raw outputs.</span>
-</span><span id="RVFLClassifier-70"><a href="#RVFLClassifier-70"><span class="linenos"> 70</span></a>
-</span><span id="RVFLClassifier-71"><a href="#RVFLClassifier-71"><span class="linenos"> 71</span></a><span class="sd">        The softmax is computed with the standard max-subtraction trick for</span>
-</span><span id="RVFLClassifier-72"><a href="#RVFLClassifier-72"><span class="linenos"> 72</span></a><span class="sd">        numerical stability.</span>
+</span><span id="RVFLClassifier-39"><a href="#RVFLClassifier-39"><span class="linenos"> 39</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="RVFLClassifier-40"><a href="#RVFLClassifier-40"><span class="linenos"> 40</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="RVFLClassifier-41"><a href="#RVFLClassifier-41"><span class="linenos"> 41</span></a>        <span class="n">n_nodes</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+</span><span id="RVFLClassifier-42"><a href="#RVFLClassifier-42"><span class="linenos"> 42</span></a>        <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">,</span>
+</span><span id="RVFLClassifier-43"><a href="#RVFLClassifier-43"><span class="linenos"> 43</span></a>        <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+</span><span id="RVFLClassifier-44"><a href="#RVFLClassifier-44"><span class="linenos"> 44</span></a>        <span class="n">alpha</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+</span><span id="RVFLClassifier-45"><a href="#RVFLClassifier-45"><span class="linenos"> 45</span></a>        <span class="n">direct_link</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="RVFLClassifier-46"><a href="#RVFLClassifier-46"><span class="linenos"> 46</span></a>        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+</span><span id="RVFLClassifier-47"><a href="#RVFLClassifier-47"><span class="linenos"> 47</span></a>    <span class="p">):</span>
+</span><span id="RVFLClassifier-48"><a href="#RVFLClassifier-48"><span class="linenos"> 48</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="RVFLClassifier-49"><a href="#RVFLClassifier-49"><span class="linenos"> 49</span></a>            <span class="n">n_nodes</span><span class="o">=</span><span class="n">n_nodes</span><span class="p">,</span>
+</span><span id="RVFLClassifier-50"><a href="#RVFLClassifier-50"><span class="linenos"> 50</span></a>            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
+</span><span id="RVFLClassifier-51"><a href="#RVFLClassifier-51"><span class="linenos"> 51</span></a>            <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span>
+</span><span id="RVFLClassifier-52"><a href="#RVFLClassifier-52"><span class="linenos"> 52</span></a>            <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+</span><span id="RVFLClassifier-53"><a href="#RVFLClassifier-53"><span class="linenos"> 53</span></a>            <span class="n">direct_link</span><span class="o">=</span><span class="n">direct_link</span><span class="p">,</span>
+</span><span id="RVFLClassifier-54"><a href="#RVFLClassifier-54"><span class="linenos"> 54</span></a>            <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span>
+</span><span id="RVFLClassifier-55"><a href="#RVFLClassifier-55"><span class="linenos"> 55</span></a>        <span class="p">)</span>
+</span><span id="RVFLClassifier-56"><a href="#RVFLClassifier-56"><span class="linenos"> 56</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">classes_</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="RVFLClassifier-57"><a href="#RVFLClassifier-57"><span class="linenos"> 57</span></a>
+</span><span id="RVFLClassifier-58"><a href="#RVFLClassifier-58"><span class="linenos"> 58</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</span><span id="RVFLClassifier-59"><a href="#RVFLClassifier-59"><span class="linenos"> 59</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="RVFLClassifier-60"><a href="#RVFLClassifier-60"><span class="linenos"> 60</span></a><span class="sd">        Fit the RVFL classifier.</span>
+</span><span id="RVFLClassifier-61"><a href="#RVFLClassifier-61"><span class="linenos"> 61</span></a>
+</span><span id="RVFLClassifier-62"><a href="#RVFLClassifier-62"><span class="linenos"> 62</span></a><span class="sd">        Internally one-hot encodes ``y``, expands binary targets to two</span>
+</span><span id="RVFLClassifier-63"><a href="#RVFLClassifier-63"><span class="linenos"> 63</span></a><span class="sd">        columns so that softmax is well-defined, then delegates to</span>
+</span><span id="RVFLClassifier-64"><a href="#RVFLClassifier-64"><span class="linenos"> 64</span></a><span class="sd">        :meth:`_fit_hidden`.</span>
+</span><span id="RVFLClassifier-65"><a href="#RVFLClassifier-65"><span class="linenos"> 65</span></a>
+</span><span id="RVFLClassifier-66"><a href="#RVFLClassifier-66"><span class="linenos"> 66</span></a><span class="sd">        Parameters</span>
+</span><span id="RVFLClassifier-67"><a href="#RVFLClassifier-67"><span class="linenos"> 67</span></a><span class="sd">        ----------</span>
+</span><span id="RVFLClassifier-68"><a href="#RVFLClassifier-68"><span class="linenos"> 68</span></a><span class="sd">        X : array-like of shape (n_samples, n_features)</span>
+</span><span id="RVFLClassifier-69"><a href="#RVFLClassifier-69"><span class="linenos"> 69</span></a><span class="sd">            Training inputs.</span>
+</span><span id="RVFLClassifier-70"><a href="#RVFLClassifier-70"><span class="linenos"> 70</span></a><span class="sd">        y : array-like of shape (n_samples,)</span>
+</span><span id="RVFLClassifier-71"><a href="#RVFLClassifier-71"><span class="linenos"> 71</span></a><span class="sd">            Class labels.  Can be integers, strings, or any type accepted</span>
+</span><span id="RVFLClassifier-72"><a href="#RVFLClassifier-72"><span class="linenos"> 72</span></a><span class="sd">            by :class:`sklearn.preprocessing.LabelBinarizer`.</span>
 </span><span id="RVFLClassifier-73"><a href="#RVFLClassifier-73"><span class="linenos"> 73</span></a>
-</span><span id="RVFLClassifier-74"><a href="#RVFLClassifier-74"><span class="linenos"> 74</span></a><span class="sd">        Parameters</span>
-</span><span id="RVFLClassifier-75"><a href="#RVFLClassifier-75"><span class="linenos"> 75</span></a><span class="sd">        ----------</span>
-</span><span id="RVFLClassifier-76"><a href="#RVFLClassifier-76"><span class="linenos"> 76</span></a><span class="sd">        X : array-like of shape (n_samples, n_features)</span>
-</span><span id="RVFLClassifier-77"><a href="#RVFLClassifier-77"><span class="linenos"> 77</span></a><span class="sd">            Input samples.</span>
-</span><span id="RVFLClassifier-78"><a href="#RVFLClassifier-78"><span class="linenos"> 78</span></a>
-</span><span id="RVFLClassifier-79"><a href="#RVFLClassifier-79"><span class="linenos"> 79</span></a><span class="sd">        Returns</span>
-</span><span id="RVFLClassifier-80"><a href="#RVFLClassifier-80"><span class="linenos"> 80</span></a><span class="sd">        -------</span>
-</span><span id="RVFLClassifier-81"><a href="#RVFLClassifier-81"><span class="linenos"> 81</span></a><span class="sd">        proba : ndarray of shape (n_samples, n_classes)</span>
-</span><span id="RVFLClassifier-82"><a href="#RVFLClassifier-82"><span class="linenos"> 82</span></a><span class="sd">            Estimated class probabilities.  Rows sum to 1.</span>
-</span><span id="RVFLClassifier-83"><a href="#RVFLClassifier-83"><span class="linenos"> 83</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="RVFLClassifier-84"><a href="#RVFLClassifier-84"><span class="linenos"> 84</span></a>        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_raw</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</span><span id="RVFLClassifier-85"><a href="#RVFLClassifier-85"><span class="linenos"> 85</span></a>        <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">logits</span> <span class="o">-</span> <span class="n">logits</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-</span><span id="RVFLClassifier-86"><a href="#RVFLClassifier-86"><span class="linenos"> 86</span></a>        <span class="k">return</span> <span class="n">e</span> <span class="o">/</span> <span class="n">e</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="RVFLClassifier-87"><a href="#RVFLClassifier-87"><span class="linenos"> 87</span></a>
-</span><span id="RVFLClassifier-88"><a href="#RVFLClassifier-88"><span class="linenos"> 88</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-</span><span id="RVFLClassifier-89"><a href="#RVFLClassifier-89"><span class="linenos"> 89</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="RVFLClassifier-90"><a href="#RVFLClassifier-90"><span class="linenos"> 90</span></a><span class="sd">        Predict class labels for ``X``.</span>
-</span><span id="RVFLClassifier-91"><a href="#RVFLClassifier-91"><span class="linenos"> 91</span></a>
-</span><span id="RVFLClassifier-92"><a href="#RVFLClassifier-92"><span class="linenos"> 92</span></a><span class="sd">        Parameters</span>
-</span><span id="RVFLClassifier-93"><a href="#RVFLClassifier-93"><span class="linenos"> 93</span></a><span class="sd">        ----------</span>
-</span><span id="RVFLClassifier-94"><a href="#RVFLClassifier-94"><span class="linenos"> 94</span></a><span class="sd">        X : array-like of shape (n_samples, n_features)</span>
-</span><span id="RVFLClassifier-95"><a href="#RVFLClassifier-95"><span class="linenos"> 95</span></a><span class="sd">            Input samples.</span>
-</span><span id="RVFLClassifier-96"><a href="#RVFLClassifier-96"><span class="linenos"> 96</span></a>
-</span><span id="RVFLClassifier-97"><a href="#RVFLClassifier-97"><span class="linenos"> 97</span></a><span class="sd">        Returns</span>
-</span><span id="RVFLClassifier-98"><a href="#RVFLClassifier-98"><span class="linenos"> 98</span></a><span class="sd">        -------</span>
-</span><span id="RVFLClassifier-99"><a href="#RVFLClassifier-99"><span class="linenos"> 99</span></a><span class="sd">        labels : ndarray of shape (n_samples,)</span>
-</span><span id="RVFLClassifier-100"><a href="#RVFLClassifier-100"><span class="linenos">100</span></a><span class="sd">            Predicted class labels, in the same dtype / encoding as the</span>
-</span><span id="RVFLClassifier-101"><a href="#RVFLClassifier-101"><span class="linenos">101</span></a><span class="sd">            labels seen during ``fit``.</span>
-</span><span id="RVFLClassifier-102"><a href="#RVFLClassifier-102"><span class="linenos">102</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="RVFLClassifier-103"><a href="#RVFLClassifier-103"><span class="linenos">103</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lb_</span><span class="o">.</span><span class="n">classes_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+</span><span id="RVFLClassifier-74"><a href="#RVFLClassifier-74"><span class="linenos"> 74</span></a><span class="sd">        Returns</span>
+</span><span id="RVFLClassifier-75"><a href="#RVFLClassifier-75"><span class="linenos"> 75</span></a><span class="sd">        -------</span>
+</span><span id="RVFLClassifier-76"><a href="#RVFLClassifier-76"><span class="linenos"> 76</span></a><span class="sd">        self : RVFLClassifier</span>
+</span><span id="RVFLClassifier-77"><a href="#RVFLClassifier-77"><span class="linenos"> 77</span></a><span class="sd">            Fitted estimator.</span>
+</span><span id="RVFLClassifier-78"><a href="#RVFLClassifier-78"><span class="linenos"> 78</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RVFLClassifier-79"><a href="#RVFLClassifier-79"><span class="linenos"> 79</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">lb_</span> <span class="o">=</span> <span class="n">LabelBinarizer</span><span class="p">()</span>
+</span><span id="RVFLClassifier-80"><a href="#RVFLClassifier-80"><span class="linenos"> 80</span></a>        <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lb_</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+</span><span id="RVFLClassifier-81"><a href="#RVFLClassifier-81"><span class="linenos"> 81</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">classes_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lb_</span><span class="o">.</span><span class="n">classes_</span>
+</span><span id="RVFLClassifier-82"><a href="#RVFLClassifier-82"><span class="linenos"> 82</span></a>        <span class="k">if</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># binary: expand to two columns</span>
+</span><span id="RVFLClassifier-83"><a href="#RVFLClassifier-83"><span class="linenos"> 83</span></a>            <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Y</span><span class="p">])</span>
+</span><span id="RVFLClassifier-84"><a href="#RVFLClassifier-84"><span class="linenos"> 84</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_hidden</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+</span><span id="RVFLClassifier-85"><a href="#RVFLClassifier-85"><span class="linenos"> 85</span></a>        <span class="k">return</span> <span class="bp">self</span>
+</span><span id="RVFLClassifier-86"><a href="#RVFLClassifier-86"><span class="linenos"> 86</span></a>
+</span><span id="RVFLClassifier-87"><a href="#RVFLClassifier-87"><span class="linenos"> 87</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+</span><span id="RVFLClassifier-88"><a href="#RVFLClassifier-88"><span class="linenos"> 88</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="RVFLClassifier-89"><a href="#RVFLClassifier-89"><span class="linenos"> 89</span></a><span class="sd">        Predict class probabilities using a softmax over the raw outputs.</span>
+</span><span id="RVFLClassifier-90"><a href="#RVFLClassifier-90"><span class="linenos"> 90</span></a>
+</span><span id="RVFLClassifier-91"><a href="#RVFLClassifier-91"><span class="linenos"> 91</span></a><span class="sd">        The softmax is computed with the standard max-subtraction trick for</span>
+</span><span id="RVFLClassifier-92"><a href="#RVFLClassifier-92"><span class="linenos"> 92</span></a><span class="sd">        numerical stability.</span>
+</span><span id="RVFLClassifier-93"><a href="#RVFLClassifier-93"><span class="linenos"> 93</span></a>
+</span><span id="RVFLClassifier-94"><a href="#RVFLClassifier-94"><span class="linenos"> 94</span></a><span class="sd">        Parameters</span>
+</span><span id="RVFLClassifier-95"><a href="#RVFLClassifier-95"><span class="linenos"> 95</span></a><span class="sd">        ----------</span>
+</span><span id="RVFLClassifier-96"><a href="#RVFLClassifier-96"><span class="linenos"> 96</span></a><span class="sd">        X : array-like of shape (n_samples, n_features)</span>
+</span><span id="RVFLClassifier-97"><a href="#RVFLClassifier-97"><span class="linenos"> 97</span></a><span class="sd">            Input samples.</span>
+</span><span id="RVFLClassifier-98"><a href="#RVFLClassifier-98"><span class="linenos"> 98</span></a>
+</span><span id="RVFLClassifier-99"><a href="#RVFLClassifier-99"><span class="linenos"> 99</span></a><span class="sd">        Returns</span>
+</span><span id="RVFLClassifier-100"><a href="#RVFLClassifier-100"><span class="linenos">100</span></a><span class="sd">        -------</span>
+</span><span id="RVFLClassifier-101"><a href="#RVFLClassifier-101"><span class="linenos">101</span></a><span class="sd">        proba : ndarray of shape (n_samples, n_classes)</span>
+</span><span id="RVFLClassifier-102"><a href="#RVFLClassifier-102"><span class="linenos">102</span></a><span class="sd">            Estimated class probabilities.  Rows sum to 1.</span>
+</span><span id="RVFLClassifier-103"><a href="#RVFLClassifier-103"><span class="linenos">103</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RVFLClassifier-104"><a href="#RVFLClassifier-104"><span class="linenos">104</span></a>        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_raw</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</span><span id="RVFLClassifier-105"><a href="#RVFLClassifier-105"><span class="linenos">105</span></a>        <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">logits</span> <span class="o">-</span> <span class="n">logits</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</span><span id="RVFLClassifier-106"><a href="#RVFLClassifier-106"><span class="linenos">106</span></a>        <span class="k">return</span> <span class="n">e</span> <span class="o">/</span> <span class="n">e</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="RVFLClassifier-107"><a href="#RVFLClassifier-107"><span class="linenos">107</span></a>
+</span><span id="RVFLClassifier-108"><a href="#RVFLClassifier-108"><span class="linenos">108</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+</span><span id="RVFLClassifier-109"><a href="#RVFLClassifier-109"><span class="linenos">109</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="RVFLClassifier-110"><a href="#RVFLClassifier-110"><span class="linenos">110</span></a><span class="sd">        Predict class labels for ``X``.</span>
+</span><span id="RVFLClassifier-111"><a href="#RVFLClassifier-111"><span class="linenos">111</span></a>
+</span><span id="RVFLClassifier-112"><a href="#RVFLClassifier-112"><span class="linenos">112</span></a><span class="sd">        Parameters</span>
+</span><span id="RVFLClassifier-113"><a href="#RVFLClassifier-113"><span class="linenos">113</span></a><span class="sd">        ----------</span>
+</span><span id="RVFLClassifier-114"><a href="#RVFLClassifier-114"><span class="linenos">114</span></a><span class="sd">        X : array-like of shape (n_samples, n_features)</span>
+</span><span id="RVFLClassifier-115"><a href="#RVFLClassifier-115"><span class="linenos">115</span></a><span class="sd">            Input samples.</span>
+</span><span id="RVFLClassifier-116"><a href="#RVFLClassifier-116"><span class="linenos">116</span></a>
+</span><span id="RVFLClassifier-117"><a href="#RVFLClassifier-117"><span class="linenos">117</span></a><span class="sd">        Returns</span>
+</span><span id="RVFLClassifier-118"><a href="#RVFLClassifier-118"><span class="linenos">118</span></a><span class="sd">        -------</span>
+</span><span id="RVFLClassifier-119"><a href="#RVFLClassifier-119"><span class="linenos">119</span></a><span class="sd">        labels : ndarray of shape (n_samples,)</span>
+</span><span id="RVFLClassifier-120"><a href="#RVFLClassifier-120"><span class="linenos">120</span></a><span class="sd">            Predicted class labels, in the same dtype / encoding as the</span>
+</span><span id="RVFLClassifier-121"><a href="#RVFLClassifier-121"><span class="linenos">121</span></a><span class="sd">            labels seen during ``fit``.</span>
+</span><span id="RVFLClassifier-122"><a href="#RVFLClassifier-122"><span class="linenos">122</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RVFLClassifier-123"><a href="#RVFLClassifier-123"><span class="linenos">123</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lb_</span><span class="o">.</span><span class="n">classes_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
 </span></pre></div>
 
 
@@ -426,33 +450,34 @@ softmax to the raw outputs and returning the argmax class.</p>
 
     </div>
     <a class="headerlink" href="#RVFLClassifier.fit"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RVFLClassifier.fit-39"><a href="#RVFLClassifier.fit-39"><span class="linenos">39</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-</span><span id="RVFLClassifier.fit-40"><a href="#RVFLClassifier.fit-40"><span class="linenos">40</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="RVFLClassifier.fit-41"><a href="#RVFLClassifier.fit-41"><span class="linenos">41</span></a><span class="sd">        Fit the RVFL classifier.</span>
-</span><span id="RVFLClassifier.fit-42"><a href="#RVFLClassifier.fit-42"><span class="linenos">42</span></a>
-</span><span id="RVFLClassifier.fit-43"><a href="#RVFLClassifier.fit-43"><span class="linenos">43</span></a><span class="sd">        Internally one-hot encodes ``y``, expands binary targets to two</span>
-</span><span id="RVFLClassifier.fit-44"><a href="#RVFLClassifier.fit-44"><span class="linenos">44</span></a><span class="sd">        columns so that softmax is well-defined, then delegates to</span>
-</span><span id="RVFLClassifier.fit-45"><a href="#RVFLClassifier.fit-45"><span class="linenos">45</span></a><span class="sd">        :meth:`_fit_hidden`.</span>
-</span><span id="RVFLClassifier.fit-46"><a href="#RVFLClassifier.fit-46"><span class="linenos">46</span></a>
-</span><span id="RVFLClassifier.fit-47"><a href="#RVFLClassifier.fit-47"><span class="linenos">47</span></a><span class="sd">        Parameters</span>
-</span><span id="RVFLClassifier.fit-48"><a href="#RVFLClassifier.fit-48"><span class="linenos">48</span></a><span class="sd">        ----------</span>
-</span><span id="RVFLClassifier.fit-49"><a href="#RVFLClassifier.fit-49"><span class="linenos">49</span></a><span class="sd">        X : array-like of shape (n_samples, n_features)</span>
-</span><span id="RVFLClassifier.fit-50"><a href="#RVFLClassifier.fit-50"><span class="linenos">50</span></a><span class="sd">            Training inputs.</span>
-</span><span id="RVFLClassifier.fit-51"><a href="#RVFLClassifier.fit-51"><span class="linenos">51</span></a><span class="sd">        y : array-like of shape (n_samples,)</span>
-</span><span id="RVFLClassifier.fit-52"><a href="#RVFLClassifier.fit-52"><span class="linenos">52</span></a><span class="sd">            Class labels.  Can be integers, strings, or any type accepted</span>
-</span><span id="RVFLClassifier.fit-53"><a href="#RVFLClassifier.fit-53"><span class="linenos">53</span></a><span class="sd">            by :class:`sklearn.preprocessing.LabelBinarizer`.</span>
-</span><span id="RVFLClassifier.fit-54"><a href="#RVFLClassifier.fit-54"><span class="linenos">54</span></a>
-</span><span id="RVFLClassifier.fit-55"><a href="#RVFLClassifier.fit-55"><span class="linenos">55</span></a><span class="sd">        Returns</span>
-</span><span id="RVFLClassifier.fit-56"><a href="#RVFLClassifier.fit-56"><span class="linenos">56</span></a><span class="sd">        -------</span>
-</span><span id="RVFLClassifier.fit-57"><a href="#RVFLClassifier.fit-57"><span class="linenos">57</span></a><span class="sd">        self : RVFLClassifier</span>
-</span><span id="RVFLClassifier.fit-58"><a href="#RVFLClassifier.fit-58"><span class="linenos">58</span></a><span class="sd">            Fitted estimator.</span>
-</span><span id="RVFLClassifier.fit-59"><a href="#RVFLClassifier.fit-59"><span class="linenos">59</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="RVFLClassifier.fit-60"><a href="#RVFLClassifier.fit-60"><span class="linenos">60</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">lb_</span> <span class="o">=</span> <span class="n">LabelBinarizer</span><span class="p">()</span>
-</span><span id="RVFLClassifier.fit-61"><a href="#RVFLClassifier.fit-61"><span class="linenos">61</span></a>        <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lb_</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-</span><span id="RVFLClassifier.fit-62"><a href="#RVFLClassifier.fit-62"><span class="linenos">62</span></a>        <span class="k">if</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># binary: expand to two columns</span>
-</span><span id="RVFLClassifier.fit-63"><a href="#RVFLClassifier.fit-63"><span class="linenos">63</span></a>            <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Y</span><span class="p">])</span>
-</span><span id="RVFLClassifier.fit-64"><a href="#RVFLClassifier.fit-64"><span class="linenos">64</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_hidden</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
-</span><span id="RVFLClassifier.fit-65"><a href="#RVFLClassifier.fit-65"><span class="linenos">65</span></a>        <span class="k">return</span> <span class="bp">self</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RVFLClassifier.fit-58"><a href="#RVFLClassifier.fit-58"><span class="linenos">58</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</span><span id="RVFLClassifier.fit-59"><a href="#RVFLClassifier.fit-59"><span class="linenos">59</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="RVFLClassifier.fit-60"><a href="#RVFLClassifier.fit-60"><span class="linenos">60</span></a><span class="sd">        Fit the RVFL classifier.</span>
+</span><span id="RVFLClassifier.fit-61"><a href="#RVFLClassifier.fit-61"><span class="linenos">61</span></a>
+</span><span id="RVFLClassifier.fit-62"><a href="#RVFLClassifier.fit-62"><span class="linenos">62</span></a><span class="sd">        Internally one-hot encodes ``y``, expands binary targets to two</span>
+</span><span id="RVFLClassifier.fit-63"><a href="#RVFLClassifier.fit-63"><span class="linenos">63</span></a><span class="sd">        columns so that softmax is well-defined, then delegates to</span>
+</span><span id="RVFLClassifier.fit-64"><a href="#RVFLClassifier.fit-64"><span class="linenos">64</span></a><span class="sd">        :meth:`_fit_hidden`.</span>
+</span><span id="RVFLClassifier.fit-65"><a href="#RVFLClassifier.fit-65"><span class="linenos">65</span></a>
+</span><span id="RVFLClassifier.fit-66"><a href="#RVFLClassifier.fit-66"><span class="linenos">66</span></a><span class="sd">        Parameters</span>
+</span><span id="RVFLClassifier.fit-67"><a href="#RVFLClassifier.fit-67"><span class="linenos">67</span></a><span class="sd">        ----------</span>
+</span><span id="RVFLClassifier.fit-68"><a href="#RVFLClassifier.fit-68"><span class="linenos">68</span></a><span class="sd">        X : array-like of shape (n_samples, n_features)</span>
+</span><span id="RVFLClassifier.fit-69"><a href="#RVFLClassifier.fit-69"><span class="linenos">69</span></a><span class="sd">            Training inputs.</span>
+</span><span id="RVFLClassifier.fit-70"><a href="#RVFLClassifier.fit-70"><span class="linenos">70</span></a><span class="sd">        y : array-like of shape (n_samples,)</span>
+</span><span id="RVFLClassifier.fit-71"><a href="#RVFLClassifier.fit-71"><span class="linenos">71</span></a><span class="sd">            Class labels.  Can be integers, strings, or any type accepted</span>
+</span><span id="RVFLClassifier.fit-72"><a href="#RVFLClassifier.fit-72"><span class="linenos">72</span></a><span class="sd">            by :class:`sklearn.preprocessing.LabelBinarizer`.</span>
+</span><span id="RVFLClassifier.fit-73"><a href="#RVFLClassifier.fit-73"><span class="linenos">73</span></a>
+</span><span id="RVFLClassifier.fit-74"><a href="#RVFLClassifier.fit-74"><span class="linenos">74</span></a><span class="sd">        Returns</span>
+</span><span id="RVFLClassifier.fit-75"><a href="#RVFLClassifier.fit-75"><span class="linenos">75</span></a><span class="sd">        -------</span>
+</span><span id="RVFLClassifier.fit-76"><a href="#RVFLClassifier.fit-76"><span class="linenos">76</span></a><span class="sd">        self : RVFLClassifier</span>
+</span><span id="RVFLClassifier.fit-77"><a href="#RVFLClassifier.fit-77"><span class="linenos">77</span></a><span class="sd">            Fitted estimator.</span>
+</span><span id="RVFLClassifier.fit-78"><a href="#RVFLClassifier.fit-78"><span class="linenos">78</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RVFLClassifier.fit-79"><a href="#RVFLClassifier.fit-79"><span class="linenos">79</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">lb_</span> <span class="o">=</span> <span class="n">LabelBinarizer</span><span class="p">()</span>
+</span><span id="RVFLClassifier.fit-80"><a href="#RVFLClassifier.fit-80"><span class="linenos">80</span></a>        <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lb_</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+</span><span id="RVFLClassifier.fit-81"><a href="#RVFLClassifier.fit-81"><span class="linenos">81</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">classes_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lb_</span><span class="o">.</span><span class="n">classes_</span>
+</span><span id="RVFLClassifier.fit-82"><a href="#RVFLClassifier.fit-82"><span class="linenos">82</span></a>        <span class="k">if</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># binary: expand to two columns</span>
+</span><span id="RVFLClassifier.fit-83"><a href="#RVFLClassifier.fit-83"><span class="linenos">83</span></a>            <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Y</span><span class="p">])</span>
+</span><span id="RVFLClassifier.fit-84"><a href="#RVFLClassifier.fit-84"><span class="linenos">84</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_hidden</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+</span><span id="RVFLClassifier.fit-85"><a href="#RVFLClassifier.fit-85"><span class="linenos">85</span></a>        <span class="k">return</span> <span class="bp">self</span>
 </span></pre></div>
 
 
@@ -489,26 +514,26 @@ y : array-like of shape (n_samples,)
 
     </div>
     <a class="headerlink" href="#RVFLClassifier.predict_proba"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RVFLClassifier.predict_proba-67"><a href="#RVFLClassifier.predict_proba-67"><span class="linenos">67</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-</span><span id="RVFLClassifier.predict_proba-68"><a href="#RVFLClassifier.predict_proba-68"><span class="linenos">68</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="RVFLClassifier.predict_proba-69"><a href="#RVFLClassifier.predict_proba-69"><span class="linenos">69</span></a><span class="sd">        Predict class probabilities using a softmax over the raw outputs.</span>
-</span><span id="RVFLClassifier.predict_proba-70"><a href="#RVFLClassifier.predict_proba-70"><span class="linenos">70</span></a>
-</span><span id="RVFLClassifier.predict_proba-71"><a href="#RVFLClassifier.predict_proba-71"><span class="linenos">71</span></a><span class="sd">        The softmax is computed with the standard max-subtraction trick for</span>
-</span><span id="RVFLClassifier.predict_proba-72"><a href="#RVFLClassifier.predict_proba-72"><span class="linenos">72</span></a><span class="sd">        numerical stability.</span>
-</span><span id="RVFLClassifier.predict_proba-73"><a href="#RVFLClassifier.predict_proba-73"><span class="linenos">73</span></a>
-</span><span id="RVFLClassifier.predict_proba-74"><a href="#RVFLClassifier.predict_proba-74"><span class="linenos">74</span></a><span class="sd">        Parameters</span>
-</span><span id="RVFLClassifier.predict_proba-75"><a href="#RVFLClassifier.predict_proba-75"><span class="linenos">75</span></a><span class="sd">        ----------</span>
-</span><span id="RVFLClassifier.predict_proba-76"><a href="#RVFLClassifier.predict_proba-76"><span class="linenos">76</span></a><span class="sd">        X : array-like of shape (n_samples, n_features)</span>
-</span><span id="RVFLClassifier.predict_proba-77"><a href="#RVFLClassifier.predict_proba-77"><span class="linenos">77</span></a><span class="sd">            Input samples.</span>
-</span><span id="RVFLClassifier.predict_proba-78"><a href="#RVFLClassifier.predict_proba-78"><span class="linenos">78</span></a>
-</span><span id="RVFLClassifier.predict_proba-79"><a href="#RVFLClassifier.predict_proba-79"><span class="linenos">79</span></a><span class="sd">        Returns</span>
-</span><span id="RVFLClassifier.predict_proba-80"><a href="#RVFLClassifier.predict_proba-80"><span class="linenos">80</span></a><span class="sd">        -------</span>
-</span><span id="RVFLClassifier.predict_proba-81"><a href="#RVFLClassifier.predict_proba-81"><span class="linenos">81</span></a><span class="sd">        proba : ndarray of shape (n_samples, n_classes)</span>
-</span><span id="RVFLClassifier.predict_proba-82"><a href="#RVFLClassifier.predict_proba-82"><span class="linenos">82</span></a><span class="sd">            Estimated class probabilities.  Rows sum to 1.</span>
-</span><span id="RVFLClassifier.predict_proba-83"><a href="#RVFLClassifier.predict_proba-83"><span class="linenos">83</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="RVFLClassifier.predict_proba-84"><a href="#RVFLClassifier.predict_proba-84"><span class="linenos">84</span></a>        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_raw</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</span><span id="RVFLClassifier.predict_proba-85"><a href="#RVFLClassifier.predict_proba-85"><span class="linenos">85</span></a>        <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">logits</span> <span class="o">-</span> <span class="n">logits</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-</span><span id="RVFLClassifier.predict_proba-86"><a href="#RVFLClassifier.predict_proba-86"><span class="linenos">86</span></a>        <span class="k">return</span> <span class="n">e</span> <span class="o">/</span> <span class="n">e</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RVFLClassifier.predict_proba-87"><a href="#RVFLClassifier.predict_proba-87"><span class="linenos"> 87</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+</span><span id="RVFLClassifier.predict_proba-88"><a href="#RVFLClassifier.predict_proba-88"><span class="linenos"> 88</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="RVFLClassifier.predict_proba-89"><a href="#RVFLClassifier.predict_proba-89"><span class="linenos"> 89</span></a><span class="sd">        Predict class probabilities using a softmax over the raw outputs.</span>
+</span><span id="RVFLClassifier.predict_proba-90"><a href="#RVFLClassifier.predict_proba-90"><span class="linenos"> 90</span></a>
+</span><span id="RVFLClassifier.predict_proba-91"><a href="#RVFLClassifier.predict_proba-91"><span class="linenos"> 91</span></a><span class="sd">        The softmax is computed with the standard max-subtraction trick for</span>
+</span><span id="RVFLClassifier.predict_proba-92"><a href="#RVFLClassifier.predict_proba-92"><span class="linenos"> 92</span></a><span class="sd">        numerical stability.</span>
+</span><span id="RVFLClassifier.predict_proba-93"><a href="#RVFLClassifier.predict_proba-93"><span class="linenos"> 93</span></a>
+</span><span id="RVFLClassifier.predict_proba-94"><a href="#RVFLClassifier.predict_proba-94"><span class="linenos"> 94</span></a><span class="sd">        Parameters</span>
+</span><span id="RVFLClassifier.predict_proba-95"><a href="#RVFLClassifier.predict_proba-95"><span class="linenos"> 95</span></a><span class="sd">        ----------</span>
+</span><span id="RVFLClassifier.predict_proba-96"><a href="#RVFLClassifier.predict_proba-96"><span class="linenos"> 96</span></a><span class="sd">        X : array-like of shape (n_samples, n_features)</span>
+</span><span id="RVFLClassifier.predict_proba-97"><a href="#RVFLClassifier.predict_proba-97"><span class="linenos"> 97</span></a><span class="sd">            Input samples.</span>
+</span><span id="RVFLClassifier.predict_proba-98"><a href="#RVFLClassifier.predict_proba-98"><span class="linenos"> 98</span></a>
+</span><span id="RVFLClassifier.predict_proba-99"><a href="#RVFLClassifier.predict_proba-99"><span class="linenos"> 99</span></a><span class="sd">        Returns</span>
+</span><span id="RVFLClassifier.predict_proba-100"><a href="#RVFLClassifier.predict_proba-100"><span class="linenos">100</span></a><span class="sd">        -------</span>
+</span><span id="RVFLClassifier.predict_proba-101"><a href="#RVFLClassifier.predict_proba-101"><span class="linenos">101</span></a><span class="sd">        proba : ndarray of shape (n_samples, n_classes)</span>
+</span><span id="RVFLClassifier.predict_proba-102"><a href="#RVFLClassifier.predict_proba-102"><span class="linenos">102</span></a><span class="sd">            Estimated class probabilities.  Rows sum to 1.</span>
+</span><span id="RVFLClassifier.predict_proba-103"><a href="#RVFLClassifier.predict_proba-103"><span class="linenos">103</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RVFLClassifier.predict_proba-104"><a href="#RVFLClassifier.predict_proba-104"><span class="linenos">104</span></a>        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_raw</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</span><span id="RVFLClassifier.predict_proba-105"><a href="#RVFLClassifier.predict_proba-105"><span class="linenos">105</span></a>        <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">logits</span> <span class="o">-</span> <span class="n">logits</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</span><span id="RVFLClassifier.predict_proba-106"><a href="#RVFLClassifier.predict_proba-106"><span class="linenos">106</span></a>        <span class="k">return</span> <span class="n">e</span> <span class="o">/</span> <span class="n">e</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -541,22 +566,22 @@ numerical stability.</p>
 
     </div>
     <a class="headerlink" href="#RVFLClassifier.predict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RVFLClassifier.predict-88"><a href="#RVFLClassifier.predict-88"><span class="linenos"> 88</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-</span><span id="RVFLClassifier.predict-89"><a href="#RVFLClassifier.predict-89"><span class="linenos"> 89</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="RVFLClassifier.predict-90"><a href="#RVFLClassifier.predict-90"><span class="linenos"> 90</span></a><span class="sd">        Predict class labels for ``X``.</span>
-</span><span id="RVFLClassifier.predict-91"><a href="#RVFLClassifier.predict-91"><span class="linenos"> 91</span></a>
-</span><span id="RVFLClassifier.predict-92"><a href="#RVFLClassifier.predict-92"><span class="linenos"> 92</span></a><span class="sd">        Parameters</span>
-</span><span id="RVFLClassifier.predict-93"><a href="#RVFLClassifier.predict-93"><span class="linenos"> 93</span></a><span class="sd">        ----------</span>
-</span><span id="RVFLClassifier.predict-94"><a href="#RVFLClassifier.predict-94"><span class="linenos"> 94</span></a><span class="sd">        X : array-like of shape (n_samples, n_features)</span>
-</span><span id="RVFLClassifier.predict-95"><a href="#RVFLClassifier.predict-95"><span class="linenos"> 95</span></a><span class="sd">            Input samples.</span>
-</span><span id="RVFLClassifier.predict-96"><a href="#RVFLClassifier.predict-96"><span class="linenos"> 96</span></a>
-</span><span id="RVFLClassifier.predict-97"><a href="#RVFLClassifier.predict-97"><span class="linenos"> 97</span></a><span class="sd">        Returns</span>
-</span><span id="RVFLClassifier.predict-98"><a href="#RVFLClassifier.predict-98"><span class="linenos"> 98</span></a><span class="sd">        -------</span>
-</span><span id="RVFLClassifier.predict-99"><a href="#RVFLClassifier.predict-99"><span class="linenos"> 99</span></a><span class="sd">        labels : ndarray of shape (n_samples,)</span>
-</span><span id="RVFLClassifier.predict-100"><a href="#RVFLClassifier.predict-100"><span class="linenos">100</span></a><span class="sd">            Predicted class labels, in the same dtype / encoding as the</span>
-</span><span id="RVFLClassifier.predict-101"><a href="#RVFLClassifier.predict-101"><span class="linenos">101</span></a><span class="sd">            labels seen during ``fit``.</span>
-</span><span id="RVFLClassifier.predict-102"><a href="#RVFLClassifier.predict-102"><span class="linenos">102</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="RVFLClassifier.predict-103"><a href="#RVFLClassifier.predict-103"><span class="linenos">103</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lb_</span><span class="o">.</span><span class="n">classes_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RVFLClassifier.predict-108"><a href="#RVFLClassifier.predict-108"><span class="linenos">108</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+</span><span id="RVFLClassifier.predict-109"><a href="#RVFLClassifier.predict-109"><span class="linenos">109</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="RVFLClassifier.predict-110"><a href="#RVFLClassifier.predict-110"><span class="linenos">110</span></a><span class="sd">        Predict class labels for ``X``.</span>
+</span><span id="RVFLClassifier.predict-111"><a href="#RVFLClassifier.predict-111"><span class="linenos">111</span></a>
+</span><span id="RVFLClassifier.predict-112"><a href="#RVFLClassifier.predict-112"><span class="linenos">112</span></a><span class="sd">        Parameters</span>
+</span><span id="RVFLClassifier.predict-113"><a href="#RVFLClassifier.predict-113"><span class="linenos">113</span></a><span class="sd">        ----------</span>
+</span><span id="RVFLClassifier.predict-114"><a href="#RVFLClassifier.predict-114"><span class="linenos">114</span></a><span class="sd">        X : array-like of shape (n_samples, n_features)</span>
+</span><span id="RVFLClassifier.predict-115"><a href="#RVFLClassifier.predict-115"><span class="linenos">115</span></a><span class="sd">            Input samples.</span>
+</span><span id="RVFLClassifier.predict-116"><a href="#RVFLClassifier.predict-116"><span class="linenos">116</span></a>
+</span><span id="RVFLClassifier.predict-117"><a href="#RVFLClassifier.predict-117"><span class="linenos">117</span></a><span class="sd">        Returns</span>
+</span><span id="RVFLClassifier.predict-118"><a href="#RVFLClassifier.predict-118"><span class="linenos">118</span></a><span class="sd">        -------</span>
+</span><span id="RVFLClassifier.predict-119"><a href="#RVFLClassifier.predict-119"><span class="linenos">119</span></a><span class="sd">        labels : ndarray of shape (n_samples,)</span>
+</span><span id="RVFLClassifier.predict-120"><a href="#RVFLClassifier.predict-120"><span class="linenos">120</span></a><span class="sd">            Predicted class labels, in the same dtype / encoding as the</span>
+</span><span id="RVFLClassifier.predict-121"><a href="#RVFLClassifier.predict-121"><span class="linenos">121</span></a><span class="sd">            labels seen during ``fit``.</span>
+</span><span id="RVFLClassifier.predict-122"><a href="#RVFLClassifier.predict-122"><span class="linenos">122</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RVFLClassifier.predict-123"><a href="#RVFLClassifier.predict-123"><span class="linenos">123</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lb_</span><span class="o">.</span><span class="n">classes_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
 </span></pre></div>
 
 
