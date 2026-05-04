@@ -1,5 +1,7 @@
 # rvfl
 
+[![Documentation](https://img.shields.io/badge/documentation-is_here-green)](https://docs.techtonique.net/rvfl_python/rvfl.html)
+
 Random Vector Functional Link (RVFL) networks for Python, built on NumPy and
 compatible with the scikit-learn API.
 
