@@ -158,8 +158,8 @@ class RVFLClassifier(_RVFLBase, ClassifierMixin):
         proba : ndarray of shape (n_samples, n_classes)
             Estimated class probabilities.  Rows sum to 1.
         """
-        scores = self._predict_raw(X)          # (n_samples, n_classes)
-        proba = expit(scores)                  # element-wise sigmoid
+        scores = self._predict_raw(X)  # (n_samples, n_classes)
+        proba = expit(scores)  # element-wise sigmoid
         row_sums = proba.sum(axis=1, keepdims=True)
         row_sums = np.where(row_sums < 1e-10, 1e-10, row_sums)
         return proba / row_sums
