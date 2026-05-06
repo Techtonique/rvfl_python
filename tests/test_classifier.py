@@ -58,11 +58,11 @@ class TestRVFLClassifierInterface(unittest.TestCase):
         # predict() should agree with argmax of predict_proba()
         np.testing.assert_array_equal(
             self.clf.predict(self.X_test),
-            self.clf.lb_.classes_[proba.argmax(axis=1)],
+            self.clf.classes_[proba.argmax(axis=1)],
         )
 
     def test_fitted_attributes_exist(self):
-        for attr in ("W_", "b_", "beta_", "scaler_", "lb_"):
+        for attr in ("W_", "b_", "beta_", "scaler_"):
             self.assertTrue(hasattr(self.clf, attr), f"Missing attribute: {attr}")
 
     def test_predict_returns_numpy_array(self):
